@@ -1,0 +1,237 @@
+#:kivy 1.8.0
+
+RootWidget:
+    # import container
+    background_color: 28,28,28
+
+    container: container
+    BoxLayout:
+        id: container
+        orientation: 'vertical'
+        padding: 0
+        spacing: 0
+        canvas.before:
+            Color:
+                rgba: 28/255.,28/255.,28/255., 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+            Line:
+                joint: "miter"
+                cap: "square"
+                close: True
+                width: .9
+
+        # select_box part:
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: 6
+            spacing: 6
+            size_hint_y: None
+            height: '50dp'
+
+
+            # select-box-left
+            BoxLayout:
+                size_hint: 1, 1
+                orientation: 'vertical'
+                padding: 0
+                spacing: 0
+
+                # option calibrate
+                Spinner:
+                    id: slect_box
+                    bold:   True
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.size
+                    background_normal: "source/plot_spinner.png"
+                    background_down: "source/plot_spinner_down.png"
+                    text: "Select Box Type"
+                    values: "DVR","POLYX-green","POLYX-yellow","ALPS"
+                    on_text: root.do_action(slect_box.text)
+                    
+    
+        # camera part:
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: 6
+            spacing: 6
+            size_hint_y: None
+            height: '50dp'
+
+            # local-file-left
+            BoxLayout:
+                size_hint: 1, 1
+                orientation: 'vertical'
+                padding: 0
+                spacing: 0
+
+                Button:
+                    bold: True
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.size
+                    background_normal: "source/timg3.jpeg"
+                    background_down: "source/bt_process.png"
+                    opacity: .3 if self.disabled else 1
+                    line_clr: (0.216, 0.67, 0.784, 1)
+                    text: 'Local'
+                    on_release: root.show_load(slect_box.text)
+
+            # take-picture-right
+            BoxLayout:
+                size_hint: 1, 1
+                orientation: 'horizontal'
+                padding: 0
+                spacing: 0
+
+                ToggleButton:
+                    id: play
+                    bold: True
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.size
+                    background_normal: "source/timg0.jpeg"
+                    background_down: "source/bt_process.png"
+                    opacity: .3 if self.disabled else 1
+                    line_clr: (0.216, 0.67, 0.784, 1)
+                    text: 'Capture (press Q)'
+                    on_press: root.Onplay()
+                    # size_hint: 0.5, 1
+                    
+                Button:
+                    id: counting
+                    bold: True
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.size
+                    text: 'Counting'
+                    background_normal: "source/timg2.jpeg"
+                    on_press: root.count(root.imgPath,root.boxName)
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: 6
+            spacing: 6
+
+            Camera:
+                id: camera
+                # resolution: (640, 480)
+                source: root.imgPath
+
+        # result-part
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: 6
+            spacing: 6
+            size_hint_y: None
+            height: '50dp'
+
+            # local-file-left
+            BoxLayout:
+                size_hint: 1, 1
+                orientation: 'horizontal'
+                padding: 0
+                spacing: 6
+
+                # option calibrate
+                Label:
+                    bold: True
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.size
+                    text: 'Result:   '+ root.nailNum
+                    font_size:'18px'
+
+                # ToggleButton:
+                #     id: edit
+                #     text: "Edit"
+                #     bold: True
+                #     halign: "center"
+                #     valign: "middle"
+                #     text_size: self.size
+                #     background_normal: "source/green.png"
+                #     size_hint_x: None
+                #     size_hint: 0.1, 1
+
+    
+
+            # counting-right
+            # BoxLayout:
+            #     size_hint: 0.25, 1
+            #     orientation: 'horizontal'
+            #     padding: 0
+            #     spacing: 0
+
+
+            #     Button:
+            #         id: counting
+            #         bold: True
+            #         halign: "center"
+            #         valign: "middle"
+            #         text_size: self.size
+            #         text: 'counting'
+            #         background_normal: "source/timg0.jpeg"
+            #         on_press: root.count(root.imgPath,root.boxName)
+                    
+        # confirm-part
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: 6
+            spacing: 6
+            size_hint_y: None
+            height: '20dp'
+
+            # local-file-left
+            BoxLayout:
+                size_hint: 1, 1
+                orientation: 'vertical'
+                padding: 0
+                spacing: 0
+
+                # option calibrate
+                Label:
+                    text: ''
+
+    
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserIconView:
+            id: filechooser
+            path: '../nail_count/'
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Load"
+                on_release: root.load(filechooser.path, filechooser.selection)
+
+<LoadDialogInfo>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        # pos: root.pos
+        orientation: "vertical"
+        
+        Label:
+            text: root.LOG_info
+            font_size: '16px'
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+
+            Button:
+                text: "Cancel"
+                halign: "center"
+                valign: "middle"
+                on_release: root.cancel()
+                font_size: '16px'
